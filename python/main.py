@@ -20,7 +20,7 @@ class MonitorOneskoreni():
         self.server_vstup = tk.Entry(master)
         self.server_vstup.pack(pady=10)
         
-        self.tlacidlo_pridaj = tk.Button(master, text="Pridat server")
+        self.tlacidlo_pridaj = tk.Button(master, text="Pridat server", command=self.pridaj_server)
         self.tlacidlo_pridaj.pack(pady=5)
         
         self.tlacidlo_start = tk.Button(master, text="Spustit monitorovanie")
@@ -31,6 +31,16 @@ class MonitorOneskoreni():
         
         self.vystupny_text = tk.Text(master, height=10, width=50)
         self.vystupny_text.pack(pady=10)
+        
+    # funkcia na pridanie serveru do zoznamu
+    def pridaj_server(self):
+        server = self.server_vstup.get()
+        if server and server not in self.servery:
+            self.servery.append(server)
+            self.vystupny_text.insert(tk.END, f"Server: {server}\n")
+            self.server_vstup.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Upozornenie", "Server nebol zadany alebo uz existuje!")
         
 if __name__ == "__main__":
     root = tk.Tk()
