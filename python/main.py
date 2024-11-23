@@ -16,6 +16,7 @@ class MonitorOneskoreni():
         
         self.servery = []
         self.oneskorenia_data = pd.DataFrame(columns=["Server", "Oneskorenie (ms)"])
+        self.prebieha_monitorovanie = False
         
         self.server_vstup = tk.Entry(master)
         self.server_vstup.pack(pady=10)
@@ -25,6 +26,9 @@ class MonitorOneskoreni():
         
         self.tlacidlo_start = tk.Button(master, text="Spustit monitorovanie", command=self.spusti_monitorovanie)
         self.tlacidlo_start.pack(pady=5)
+        
+        self.tlacidlo_stop = tk.Button(master, text="Zastavit monitorovanie", command=self.zastav_monitorovanie)
+        self.tlacidlo_stop.pack(pady=5)
         
         self.zobraz_graf_tlacidlo = tk.Button(master, text="Zobrazit graf oneskoreni", command=self.vykresli_graf_oneskoreni)
         self.zobraz_graf_tlacidlo.pack(pady=5)
@@ -53,12 +57,18 @@ class MonitorOneskoreni():
             self.vystupny_text.insert(tk.END, f"Server {server} nie je dostupny\n")
             
     def spusti_monitorovanie(self):
+        self.prebieha_monitorovanie = True
         self.vystupny_text.delete(1.0, tk.END)
+        self.vystupny_text.insert(tk.END, "Monitorovanie bolo spustene\n")
         self.monitorovacie_vlakno = threading.Thread(target=self.monitoruj_oneskorenia)
         self.monitorovacie_vlakno.start()
         
+    def zastav_monitorovanie(self):
+        self.prebieha_monitorovanie = False
+        self.vystupny_text.insert(tk.END, "Monitorovanie bolo zastavene\n")
+        
     def monitoruj_oneskorenia(self):
-        while True:
+        while self.prebieha_monitorovanie:
             for server in self.servery:
                 self.ping_server(server)
             time.sleep(2) # casovy interval v akom sa budu pingovat servery
