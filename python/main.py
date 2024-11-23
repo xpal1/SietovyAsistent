@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
 import matplotlib.pyplot as plt
-from ping3 import ping
+import socket
 import threading
 import time
 
@@ -48,12 +48,18 @@ class MonitorOneskoreni():
             
     # funkcia na vykonanie pingu na server - zistenie dostupnosti servera
     def ping_server(self, server):
-        oneskorenie = ping(server)
-        if oneskorenie is not None:
-            oneskorenie = round(oneskorenie * 1000, 2) # prevod na milisekundy
-            self.oneskorenia_data.loc[len(self.oneskorenia_data)] = [server, oneskorenie]
-            self.vystupny_text.insert(tk.END, f"Ping z {server}: {oneskorenie} ms\n")
-        else:
+        zaciatocny_cas = time.time()
+        try:
+            # servery budeme pingovat cez port 53 - DNS
+            ip_adresa = socket.gethostbyname(server)
+            sock = socket.create_connection((ip_adresa, 53), timeout=2)
+            sock.close()
+            oneskorenie = (time.time() - zaciatocny_cas) * 1000 # prevod na milisekundy
+            
+            self.oneskorenia_data.loc[len(self.oneskorenia_data)] = [server, round(oneskorenie, 2)]
+            self.vystupny_text.insert(tk.END, f"Ping z {server}: {round(oneskorenie, 2)} ms\n")
+            
+        except (socket.timeout, socket.error):
             self.vystupny_text.insert(tk.END, f"Server {server} nie je dostupny\n")
             
     def spusti_monitorovanie(self):
