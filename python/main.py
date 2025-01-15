@@ -93,6 +93,19 @@ class MonitorOneskoreni():
                 plt.show()
         else:
             messagebox.showwarning("Upozornenie", "Zatial ziadne data na zobrazenie!")
+            
+        self.analyza_oneskorenia()
+            
+    # funkcia na analyzovanie celkoveho oneskorenia (priemerne, maximalne a minimalne oneskorenie)
+    def analyza_oneskorenia(self):
+        if not self.oneskorenia_data.empty:
+            priemer = self.oneskorenia_data["Oneskorenie (ms)"].mean()
+            max_hodnota = self.oneskorenia_data["Oneskorenie (ms)"].max()
+            min_hodnota = self.oneskorenia_data["Oneskorenie (ms)"].min()
+            
+            messagebox.showinfo("Analyza oneskorenia", f"Priemerne oneskorenie: {priemer:.2f} ms\nMax: {max_hodnota:.2f} ms\nMin: {min_hodnota:.2f} ms")
+        else:
+            messagebox.showwarning("Upozornenie", "Zatial ziadne data na analyzu!")    
         
 if __name__ == "__main__":
     root = tk.Tk()
