@@ -28,6 +28,15 @@ class MonitorOneskoreni():
         self.server_vstup = tk.Entry(master)
         self.server_vstup.pack(pady=10)
         
+        # posuvnik pre volbu casoveho intervalu merania oneskorenia
+        # interval od 0.5s do 60s, krok je 0.5s
+        self.interval_posuvnik = tk.Scale(master, from_=0.5, to=60, resolution=0.5, orient=tk.HORIZONTAL)
+        self.interval_posuvnik.set(2) # prednastaveny interval na 2 sekundy
+        self.interval_posuvnik.pack()
+        
+        self.interval_label = tk.Label(master, text="casovy interval (s)")
+        self.interval_label.pack(pady=5)
+        
         self.tlacidlo_pridaj = tk.Button(master, text="Pridat server", command=self.pridaj_server)
         self.tlacidlo_pridaj.pack(pady=5)
         
@@ -89,10 +98,11 @@ class MonitorOneskoreni():
         self.conn.close() # ukoncenie spojenia s databazou
         
     def monitoruj_oneskorenia(self):
+        interval = self.interval_posuvnik.get() # ziskanie intervalu z posuvnika
         while self.prebieha_monitorovanie:
             for server in self.servery:
                 self.ping_server(server)
-            time.sleep(2) # casovy interval v akom sa budu pingovat servery
+            time.sleep(interval) # casovy interval v akom sa budu pingovat servery - ziskame z posuvnika
             
     def vykresli_graf_oneskoreni(self):
         if not self.oneskorenia_data.empty:
