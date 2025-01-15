@@ -1,10 +1,7 @@
 #!/bin/bash/python3 python
 
-from curses import window
-from pydoc import text
 import tkinter as tk
 from tkinter import Toplevel, messagebox
-from tkinter import font
 import pandas as pd
 import matplotlib.pyplot as plt
 import socket
@@ -14,7 +11,8 @@ import sqlite3
 
 # trieda pre monitorovanie oneskorenia (odozvy) serverov
 class MonitorOneskoreni():
-    def __init__(self,master): 
+    def __init__(self,master):
+        # okno s nazvom
         self.master = master
         self.master.title("Monitorovanie oneskorenia serverov")
         
@@ -25,6 +23,7 @@ class MonitorOneskoreni():
         # inicializacia databazy
         self.init_db()
         
+        # vstupne pole pre zadavanie adresy servera
         self.server_vstup = tk.Entry(master)
         self.server_vstup.pack(pady=10)
         
@@ -37,21 +36,27 @@ class MonitorOneskoreni():
         self.interval_label = tk.Label(master, text="casovy interval (s)")
         self.interval_label.pack(pady=5)
         
+        # tlacidlo na pridanie servera
         self.tlacidlo_pridaj = tk.Button(master, text="Pridat server", command=self.pridaj_server)
         self.tlacidlo_pridaj.pack(pady=5)
         
+        # tlacidlo na spustenie monitorovania
         self.tlacidlo_start = tk.Button(master, text="Spustit monitorovanie", command=self.spusti_monitorovanie)
         self.tlacidlo_start.pack(pady=5)
         
+        # tlacidlo na zastavenie monitorovania
         self.tlacidlo_stop = tk.Button(master, text="Zastavit monitorovanie", command=self.zastav_monitorovanie)
         self.tlacidlo_stop.pack(pady=5)
         
+        # tlacidlo na zobrazenie oneskoreni vo forme grafu
         self.zobraz_graf_tlacidlo = tk.Button(master, text="Zobrazit graf oneskoreni", command=self.vykresli_graf_oneskoreni)
         self.zobraz_graf_tlacidlo.pack(pady=5)
         
+        # tlacidlo na zobrazenie historie oneskoreni z databazy
         self.tlacidlo_zobraz_historiu = tk.Button(master, text="Zobrazit historiu oneskoreni", command=self.zobraz_obsah_db)
         self.tlacidlo_zobraz_historiu.pack(pady=5)
         
+        # textove pole, ktore sluzi ako vystup pre merania oneskoreni
         self.vystupny_text = tk.Text(master, height=10, width=50)
         self.vystupny_text.pack(pady=10)
         
@@ -84,19 +89,22 @@ class MonitorOneskoreni():
         except (socket.timeout, socket.error):
             self.vystupny_text.insert(tk.END, f"Server {server} nie je dostupny\n")
             
+    # funkcia, ktora spusti monitorovanie oneskoreni vo vlakne a nadviaze spojenie s databazou
     def spusti_monitorovanie(self):
         self.prebieha_monitorovanie = True
         self.vystupny_text.delete(1.0, tk.END)
         self.vystupny_text.insert(tk.END, "Monitorovanie bolo spustene\n")
         self.monitorovacie_vlakno = threading.Thread(target=self.monitoruj_oneskorenia)
         self.monitorovacie_vlakno.start()
-        self.init_db() # nadviazanie spojenia s databazou
+        self.init_db()
         
+    # funkcia, ktora v pripade potreby zastavi monitorovanie a ukonci spojenie s databazou
     def zastav_monitorovanie(self):
         self.prebieha_monitorovanie = False
         self.vystupny_text.insert(tk.END, "Monitorovanie bolo zastavene\n")
-        self.conn.close() # ukoncenie spojenia s databazou
+        self.conn.close()
         
+    # funkcia, ktora monitoruje oneskorenia v lubovolnom casovom intervale
     def monitoruj_oneskorenia(self):
         interval = self.interval_posuvnik.get() # ziskanie intervalu z posuvnika
         while self.prebieha_monitorovanie:
@@ -104,6 +112,7 @@ class MonitorOneskoreni():
                 self.ping_server(server)
             time.sleep(interval) # casovy interval v akom sa budu pingovat servery - ziskame z posuvnika
             
+    # funkcia, ktora vhodne vykresli do grafu namerane oneskorenia aj s popisom
     def vykresli_graf_oneskoreni(self):
         if not self.oneskorenia_data.empty:
             plt.figure(figsize=(10, 5))
@@ -151,10 +160,13 @@ class MonitorOneskoreni():
         self.cursor.execute('INSERT INTO oneskorenia (adresa_servera, oneskorenie_ms) VALUES (?, ?)', (adresa_servera, oneskorenie))
         self.conn.commit()
         
+    # funkcia, ktora na zaklade spojenia s databazou pomocou dopytu
+    # zisti a vypise z databazy v novom okne jej cely obsah
+    # vo vhodnej tabulke s hlavickou
     def zobraz_obsah_db(self):
         # vytvorenie noveho okna
         db_okno = Toplevel(self.master)
-        db_okno.title("Obsah databazy (historia oneskoreni)")
+        db_okno.title("Obsah databazy")
         
         # vytvorenie skrolovacieho ramca
         ramec = tk.Frame(db_okno)
@@ -177,7 +189,7 @@ class MonitorOneskoreni():
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         platno.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # prepojenie scrollbaru s canvas
+        # prepojenie scrollbaru s platnom
         platno.configure(yscrollcommand=scrollbar.set)
         
         # pridanie hlavicky tabulky
@@ -200,7 +212,8 @@ class MonitorOneskoreni():
                     
         except sqlite3.Error as e:
             messagebox.showerror("Chyba", f"Nepodarilo sa nacitat udaje z databazy: {e}")
-        
+
+# hlavny vstup programu        
 if __name__ == "__main__":
     root = tk.Tk()
     app = MonitorOneskoreni(root)
