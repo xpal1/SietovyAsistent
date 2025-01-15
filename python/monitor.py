@@ -43,15 +43,15 @@ class MonitorOneskoreni():
         self.interval_label.pack(pady=5)
         
         # tlacidlo na pridanie servera
-        self.tlacidlo_pridaj = tk.Button(self.master, text="Pridat server", command=self.pridaj_server)
+        self.tlacidlo_pridaj = tk.Button(self.master, text="Pridat server", command=self.pridaj_server, bg="#87CEEB", fg="black")
         self.tlacidlo_pridaj.pack(pady=5)
         
         # tlacidlo na spustenie monitorovania
-        self.tlacidlo_start = tk.Button(self.master, text="Spustit monitorovanie", command=self.spusti_monitorovanie)
+        self.tlacidlo_start = tk.Button(self.master, text="Spustit monitorovanie", command=self.spusti_monitorovanie, bg="green", fg="white")
         self.tlacidlo_start.pack(pady=5)
         
         # tlacidlo na zastavenie monitorovania
-        self.tlacidlo_stop = tk.Button(self.master, text="Zastavit monitorovanie", command=self.zastav_monitorovanie)
+        self.tlacidlo_stop = tk.Button(self.master, text="Zastavit monitorovanie", command=self.zastav_monitorovanie, bg="red", fg="white")
         self.tlacidlo_stop.pack(pady=5)
         
         # tlacidlo na zobrazenie oneskoreni vo forme grafu
