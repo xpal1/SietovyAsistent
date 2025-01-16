@@ -1,10 +1,10 @@
 #!/bin/bash/python3 python
 
 import tkinter as tk
-from monitor import MonitorOneskoreni
+from uvod import Uvod
 
-# hlavny vstup programu        
+# hlavny vstup programu, otvori uvodne okno    
 if __name__ == "__main__":
     root = tk.Tk()
-    app = MonitorOneskoreni(root)
+    Uvod(root)
     root.mainloop()
