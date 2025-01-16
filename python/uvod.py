@@ -3,6 +3,7 @@
 import tkinter as tk
 from datetime import datetime
 from monitor import MonitorOneskoreni
+from validator import Validator
 
 class Uvod:
     def __init__(self, master):
@@ -18,6 +19,10 @@ class Uvod:
         self.tlacidlo_monitorovanie = tk.Button(self.master, text="Monitorovanie oneskorenia serverov", command=self.spusti_monitorovanie, bg="lightblue")
         self.tlacidlo_monitorovanie.pack(pady=10)
         
+        # tlacidlo pre moznost otvorenia validacie IP adresy
+        self.tlacidlo_validacia_ip = tk.Button(self.master, text="Validacia IPv4 adresy", command=self.spusti_validator, bg="lightgreen")
+        self.tlacidlo_validacia_ip.pack(pady=10)
+        
         # tlacidlo pre ukoncenie aplikacie
         self.tlacidlo_koniec = tk.Button(self.master, text="Koniec", command=self.master.quit, bg="red", fg="white")
         self.tlacidlo_koniec.pack(pady=10)
@@ -31,4 +36,15 @@ class Uvod:
     def otvor_monitorovanie(self):
         root = tk.Tk()
         MonitorOneskoreni(root)
+        root.mainloop()
+        
+    # funkcia, ktora zatvori uvodne okno a otvori okno pre validovanie IP adresy
+    def spusti_validator(self):
+        self.master.destroy()
+        self.otvor_validovanie()
+        
+    # funkcia, ktora otvori validovacie okno
+    def otvor_validovanie(self):
+        root = tk.Tk()
+        Validator(root)
         root.mainloop()
