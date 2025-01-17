@@ -4,6 +4,7 @@ import ipaddress
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
+from tkinter import ttk
 
 class IPKalkulacka:
     def __init__(self, master):
@@ -19,12 +20,24 @@ class IPKalkulacka:
         self.ip_vstup.pack(pady=5)
         
         # label pre masku podsiete
-        self.label_maska = tk.Label(self.master, text="Zadajte masku podsiete:")
+        self.label_maska = tk.Label(self.master, text="Vyberte masku podsiete:")
         self.label_maska.pack(pady=(10, 0)) # pridanie paddingu na vrchu
         
         # vstupne pole pre masku podsiete
-        self.maska_vstup = tk.Entry(self.master, width=20)
-        self.maska_vstup.pack(pady=10)
+        self.maska_vyber = ttk.Combobox(self.master, state="readonly", values=[
+            "255.255.255.252 /30",
+            "255.255.255.248 /29",
+            "255.255.255.240 /28",
+            "255.255.255.224 /27",
+            "255.255.255.192 /26",
+            "255.255.255.128 /25",
+            "255.255.255.0 /24",
+            "255.255.254.0 /23",
+            "255.255.252.0 /22",
+            "255.255.248.0 /21",
+            "255.255.240.0 /20"
+        ])
+        self.maska_vyber.pack(pady=10)
         
         # tlacidlo pre vypocet
         self.tlacidlo_vypocet = tk.Button(self.master, text="Vypocitat", command=self.vypocitaj, bg="#007FFF", fg="white")
@@ -47,7 +60,7 @@ class IPKalkulacka:
     def vypocitaj(self):
         try:
             ip_adresa = self.ip_vstup.get()
-            maska_siete = self.maska_vstup.get()
+            maska_siete = self.maska_vyber.get().split(" /")[1]
             
             # vytvorenie objektu IPv4Network za pomoci kniznice ipaddress
             network = ipaddress.IPv4Network(f"{ip_adresa}/{maska_siete}", strict=False)
