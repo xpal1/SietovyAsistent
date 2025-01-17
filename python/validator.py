@@ -8,12 +8,16 @@ class Validator():
         self.master = master
         self.master.title("Validator IPv4 adresy")
         
+        # label pre IP adresu
+        self.label_ip = tk.Label(self.master, text="Zadajte IP adresu na kontrolu:")
+        self.label_ip.pack(pady=(10, 0)) # pridanie paddingu na vrchu
+        
         # vstupne pole pre IP adresu
         self.ip_vstup = tk.Entry(self.master, width=20)
         self.ip_vstup.pack(pady=10)
         
         # tlacidlo na overenie IP adresy
-        self.tlacidlo_over = tk.Button(self.master, text="Overit IP adresu", command=self.over_ip, bg="lightblue")
+        self.tlacidlo_over = tk.Button(self.master, text="Overit IP adresu", command=self.over_ip, bg="#28A745", fg="white")
         self.tlacidlo_over.pack(pady=10)
         
         # vystupny text pre vysledok
