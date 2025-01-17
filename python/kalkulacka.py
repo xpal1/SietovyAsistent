@@ -2,6 +2,8 @@
 
 import ipaddress
 import tkinter as tk
+from tkinter import messagebox
+from tkinter import filedialog
 
 class IPKalkulacka:
     def __init__(self, master):
@@ -27,6 +29,14 @@ class IPKalkulacka:
         # tlacidlo pre vypocet
         self.tlacidlo_vypocet = tk.Button(self.master, text="Vypocitat", command=self.vypocitaj, bg="#007FFF", fg="white")
         self.tlacidlo_vypocet.pack(pady=10)
+        
+        # tlacidlo pre exportovanie vysledku
+        self.tlacidlo_export = tk.Button(self.master, text="Exportovat", command=self.exportuj, bg="#28A745", fg="white")
+        self.tlacidlo_export.pack(pady=10)
+        
+        # tlacidlo pre vycistenie vystupu
+        self.tlacidlo_vymaz = tk.Button(self.master, text="Vymazat", command=lambda: self.vystupny_text.delete(1.0, tk.END), bg="#EE2C2C", fg="white")
+        self.tlacidlo_vymaz.pack(pady=10)
         
         # vystupny text pre vysledok
         self.vystupny_text = tk.Text(self.master, height=10, width=50)
@@ -62,3 +72,25 @@ class IPKalkulacka:
         except ValueError as e:
             self.vystupny_text.delete(1.0, tk.END)
             self.vystupny_text.insert(tk.END, f"Chyba: {str(e)}\n")
+            
+    # funkcia na exportovanie vysledku do txt suboru
+    def exportuj(self):
+        # ziskanie textu z vystupneho pola
+        vysledok = self.vystupny_text.get(1.0, tk.END).strip()
+        
+        # ak na vystupe nic nie je, nic sa nepocitalo
+        if not vysledok:
+            messagebox.showwarning("Upozornenie", "Nie je zatial co exportovat!")
+            return
+        
+        # otvorenie dialogu na vyber umiestnenia a nazvu suboru
+        cesta = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Textove subory", "*.txt"), ("Vsetky subory", "*.*")], title="Ulozit vysledok ako")
+        
+        # ak uzivatel nezrusil dialog
+        if cesta:
+            try:
+                with open(cesta, "w") as subor:
+                    subor.write(vysledok)
+                messagebox.showinfo("OK", "Vysledok bol uspesne exportovany!")
+            except Exception as e:
+                messagebox.showerror("Chyba", f"Nepodarilo sa ulozit subor: {str(e)}")
