@@ -55,7 +55,7 @@ git clone https://github.com/xpal1/SietovyAsistent.git
 
 2. Prejdite do adresára projektu:
 ```bash
-cd SietovyAsistent-main/python
+cd SietovyAsistent/python
 ```
 
 3. Spustite aplikáciu pomocou nasledujúceho príkazu (za predpokladu, že máte nainštalované potrebné knižnice pre spustenie aplikácie):
